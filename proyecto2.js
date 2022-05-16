@@ -177,6 +177,7 @@ const nuevaReserva = new Reserva(
 )
 logReservas.push(nuevaReserva);
 console.table(logReservas);
+alert("Su reserva está confirmada.");
 }
 
 // Verificar reserva - El usuario puede ver si tiene una reserva
@@ -206,19 +207,26 @@ function cancelarReserva()
     alert("Aquí podrá cancelar una reserva.")
     const nombreACancelar = prompt("Ingrese el nombre de la reserva que quiere cancelar.");
     const encontrado = logReservas.find( (rese) => rese.nombre == nombreACancelar);
-    console.log(encontrado);
-    let indice = logReservas.indexOf(encontrado);
-    let conf = prompt("¿Está seguro de que desea cancelar la reserva a nombre de " + encontrado.nombre + "? \n Escriba S o N.");
-    conf = conf.toLowerCase();
-    if(conf == "s")
+    if(encontrado != undefined)
     {
-    logReservas.splice(indice,1);
-    alert("Su reserva ha sido cancelada.")
-    console.table(logReservas);
+        console.log(encontrado);
+        let indice = logReservas.indexOf(encontrado);
+        let conf = prompt("¿Está seguro de que desea cancelar la reserva a nombre de " + encontrado.nombre + "? \nEscriba S o N.");
+        conf = conf.toLowerCase();
+        if(conf == "s")
+        {
+        logReservas.splice(indice,1);
+        alert("Su reserva ha sido cancelada.")
+        console.table(logReservas);
+        }
+        else
+        {
+            alert("Gracias por su consulta.")
+        }
     }
     else
     {
-        alert("Gracias por su consulta.")
+        alert("No se encontró una reserva con ese nombre.");
     }
 }
 
