@@ -1,0 +1,370 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap");
+* {
+  font-family: 'Raleway', sans-serif;
+  margin: 0;
+  padding: 0; }
+
+html {
+  font-size: 62.5%; }
+
+.title, .tituloBloque, .tituloConectate {
+  text-align: center;
+  text-transform: uppercase; }
+
+/* Logo */
+@media only screen and (max-width: 420px) {
+  .botonera div a {
+    width: 40%; }
+    .botonera div a img {
+      width: 100%; } }
+
+@media (min-width: 420px) and (max-width: 768px) {
+  .botonera div a img {
+    width: 50%; } }
+
+/* Menu */
+.botonera ul li {
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: 300;
+  padding: 7px;
+  font-size: 1.2rem;
+  color: black; }
+
+#navbarNav ul li a {
+  color: black; }
+
+@media only screen and (min-width: 768px) {
+  /* Cambios en la nav */
+  .botonera {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; }
+    .botonera a {
+      justify-content: flex-start; }
+  .logo img {
+    width: 70%;
+    margin-left: 3rem; }
+  /* Menú */
+  .botonera ul {
+    margin: 2rem; }
+    .botonera ul li {
+      font-size: 2rem; }
+  #navbarNav ul li a:hover {
+    text-decoration: underline; } }
+
+.pie {
+  background-color: black;
+  text-transform: uppercase;
+  font-size: 1rem;
+  text-decoration: none;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0; }
+  .pie h3 {
+    display: flex;
+    justify-content: center;
+    font-size: 1rem;
+    text-decoration: none;
+    margin: 0.8rem; }
+
+.redes {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly; }
+  .redes a {
+    text-transform: uppercase;
+    font-size: 1rem;
+    text-decoration: none;
+    color: white;
+    margin-bottom: 0.8rem; }
+
+/* Arranca el responsive */
+@media only screen and (min-width: 768px) {
+  .pie {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between; }
+    .pie h3 {
+      margin: 1rem 0rem 1rem 5rem;
+      font-size: 1.3rem; }
+  .redes a {
+    margin: 1rem 5rem 1rem 5rem;
+    font-size: 1.3rem; }
+  footer a p:hover {
+    text-decoration: underline; } }
+
+
+
+.articulos {
+  padding: 15px;
+  font-size: 1.2rem;
+  letter-spacing: 0.2rem;
+  text-align: left;
+  line-height: 1.7rem;
+  margin-left: 1.5rem; }
+
+.titulo {
+  line-height: 5rem;
+  text-transform: uppercase;
+  font-weight: 600; }
+
+
+.video {
+  display: flex;
+  justify-content: center; }
+
+@media only screen and (min-width: 1080px) {
+  .articulos {
+    padding: 15px;
+    font-size: 2rem;
+    text-align: right;
+    line-height: 2.5rem;
+    margin-left: 5rem; } }
+
+.contenedorProblema {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: repeat(4, auto);
+  grid-template-areas: "nav" "article" "fotoPrin" "footer"; }
+
+#article {
+  grid-area: article; }
+
+#fotoPrin {
+  grid-area: fotoPrin; }
+
+.fotoPrincipal img {
+  width: 100%; }
+
+.pie {
+  margin-top: 3rem;
+  margin-bottom: 0; }
+
+#footer {
+  grid-area: footer; }
+
+/* Arranca el responsive de PROBLEMA */
+@media only screen and (min-width: 768px) {
+  /* Se arman las dos columnas en 4 filas */
+  .contenedorProblema {
+    display: grid;
+    grid-template-columns: 30% 30% 40%;
+    grid-template-rows: repeat(4, auto);
+    grid-template-areas: "nav nav nav" ". article article" "fotoPrin fotoPrin fotoPrin" "footer footer footer"; }
+  .pie {
+    margin-bottom: 0; } }
+
+.fotoSally img {
+  width: 100%; }
+
+.articulos p strong {
+  text-decoration: none;
+  font-weight: inherit;
+  text-decoration: underline; }
+
+@keyframes anima {
+  from {
+    color: black; }
+  to {
+    color: #E6D502; } }
+
+@keyframes anima2 {
+  from {
+    color: black; }
+  to {
+    color: #B5C7C7; } }
+
+@keyframes anima3 {
+  from {
+    color: #B5C7C7; }
+  to {
+    color: black; } }
+
+#titulito {
+  animation-name: anima;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate; }
+
+@media only screen and (min-width: 768px) {
+  .fotoSally img {
+    width: 40%; }
+  .listaQueHacemos li:nth-child(odd) {
+    animation-name: anima2;
+    animation-duration: 10s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate; }
+  .listaQueHacemos li:nth-child(even) {
+    animation-name: anima3;
+    animation-duration: 10s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate; }
+  .listaQueHacemos li {
+    list-style: none;
+    line-height: 4rem; } }
+
+.redondo {
+  border-radius: 5%; }
+
+.listaBloque {
+  padding: 3px;
+  font-size: 2rem;
+  letter-spacing: 0.2rem;
+  text-align: left; }
+
+.tituloBloque {
+  font-size: 3rem; }
+
+.colorYellow {
+  color: gold; }
+
+.colorPlatinum {
+  color: gainsboro; }
+
+#articuloPrecio p strong {
+  text-decoration: none;
+  color: gold; }
+
+.tituloConectate {
+  padding: 3rem;
+  font-size: 3rem; }
+
+.radio_buttoms {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row; }
+
+.radio_buttoms input {
+  margin-right: 2rem;
+  margin-left: 1rem; }
+
+.contenedorContacto .pie {
+  background-color: white;
+  color: black;
+  margin-bottom: 0;
+  margin-top: 0; }
+  .contenedorContacto .pie a {
+    background-color: white;
+    color: black; }
+
+#arriba {
+  background-color: black;
+  color: white; }
+
+#block {
+  background-color: black;
+  color: white; }
+
+#anchoForm {
+  font-size: 2rem; }
+
+#anchoFormulario {
+  font-size: 2rem; }
+
+.titulo2 {
+  font-size: 2.5rem; }
+
+.inputForm {
+  font-size: 2.5rem; }
+
+.place {
+  font-size: 2rem; }
+
+.ubicacionBoton {
+  display: flex;
+  justify-content: center;
+  align-content: center; }
+
+#botones {
+  text-align: center;
+  padding: 1rem 4rem 1rem 4rem;
+  font-size: 2rem; }
+
+.ingreso_datos {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 10rem; }
+
+/* Arranca el responsive de CONTACTO */
+@media only screen and (min-width: 580px) {
+  #botones:hover {
+    transform: scale(1.1);
+    background-color: black;
+    color: white;
+    text-transform: uppercase; }
+  #anchoForm {
+    font-size: 1.5rem; }
+  #anchoFormulario {
+    font-size: 1.5rem; }
+  .titulo2 {
+    font-size: 2rem; }
+  .inputForm {
+    font-size: 2rem; }
+  .place {
+    font-size: 1.5rem; }
+  #botones {
+    font-size: 1.5rem; } }
+
+@media only screen and (min-width: 900px) {
+  #anchoForm {
+    width: 60%; }
+  #anchoFormulario {
+    width: 60%; }
+  .ubicacionBoton {
+    justify-content: flex-start; } }
+
+@media only screen and (min-width: 1200px) {
+  #anchoForm {
+    font-size: 2rem; }
+  #anchoFormulario {
+    font-size: 2rem; }
+  .titulo2 {
+    font-size: 2.5rem; }
+  .inputForm {
+    font-size: 2.5rem; }
+  .place {
+    font-size: 2rem; }
+  #botones {
+    font-size: 2rem; } }
+
+@media only screen and (max-width: 340px) {
+  .place {
+    font-size: 2rem; } }
+
+@media (max-width: 1023px) {
+  .marco {
+    display: none; }
+  .alternativaResp {
+    background: url("../404/payaso.jpg") center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh; }
+    .alternativaResp h1, .alternativaResp h2 {
+      color: black;
+      text-transform: uppercase; }
+    .alternativaResp h1 {
+      display: flex;
+      justify-content: center;
+      padding-top: 10%; }
+    .alternativaResp a {
+      text-decoration: none; }
+    .alternativaResp h2 {
+      display: flex;
+      justify-content: center; } }
+
+@media (min-width: 1024px) {
+  .slide404 h5 {
+    font-size: 7rem; }
+  .slide404 p {
+    font-size: 3rem; }
+  .slide404 {
+    transition-delay: 1ms; }
+  .alternativaResp {
+    display: none; } }
+
+#cuerpoPrinc{
+  margin: 2rem;
+}

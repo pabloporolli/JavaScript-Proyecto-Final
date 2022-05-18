@@ -88,19 +88,20 @@ categoria = categoria.toLowerCase();
 
 // Log de reservas
 class Reserva{
-    constructor(nombre, nacionalidad, email, cIn, out, vigente)
+    constructor(nombre, nacionalidad, email, cIn, out, monto, vigente)
     {
         this.nombre = nombre;
         this.nacionalidad = nacionalidad;
         this.email = email;
         this.cIn = cIn;
         this.out = out;
+        this.monto = monto;
         this.vigente = vigente;
     }
 }
-const alvarez = new Reserva("Julián Álvarez", "Argentina", "alvarez@riverplate.com", "02/03", "10/03", true);
-const cruz = new Reserva("Nicolás de la Cruz", "Uruguaya", "delacruz@riverplate.com", "05/07", "09/07", true);
-const perez = new Reserva("Enzo Pérez", "Argentina", "perez@riverplate.com", "12/11", "15/11", false);
+const alvarez = new Reserva("Julián Álvarez", "Argentina", "alvarez@riverplate.com", "02/03", "10/03", 780, true);
+const cruz = new Reserva("Nicolás de la Cruz", "Uruguaya", "delacruz@riverplate.com", "05/07", "09/07", 590, true);
+const perez = new Reserva("Enzo Pérez", "Argentina", "perez@riverplate.com", "12/11", "15/11", 365, false);
 
 const logReservas = [alvarez, cruz, perez];
 console.table(logReservas);
@@ -173,11 +174,13 @@ const nuevaReserva = new Reserva(
     prompt("Ingrese su email"),
     dateIn,
     dateOut,
+    totalReserva,
     true
 )
 logReservas.push(nuevaReserva);
 console.table(logReservas);
 alert("Su reserva está confirmada.");
+consultarLogReservas();
 }
 
 // Verificar reserva - El usuario puede ver si tiene una reserva
@@ -192,13 +195,14 @@ function verificarReserva()
         for(let h = 0; h < coincidencia.length; h++)
         {
             alert("Hay " + coincidencia.length + " reserva(s) para esa persona. \nDatos de la reserva " + (h + 1) + ": \nCheck In: " + coincidencia[h].cIn + "\nCheck Out: " + coincidencia[h].out
-            + "\nConfirmada: " + coincidencia[h].vigente);
+            + "\nPrecio Total: " + coincidencia[h].monto + "\nConfirmada: " + coincidencia[h].vigente);
         }
     }
     else
     {
         alert("No existen reservas para esa persona.");
-    } 
+    }
+    consultarLogReservas();
 }
 
 // Cancelar una reserva (Nota: sé que habría podido hacer todo directamente con el indexOf, sin necesidad del find. Pero la consigna reclamaba un find y no se me ocurría dónde usarlo.)
@@ -228,15 +232,60 @@ function cancelarReserva()
     {
         alert("No se encontró una reserva con ese nombre.");
     }
+    consultarLogReservas();
 }
+
+
+// DOM - Agrega funcionalidad de consultar las reservas en registros
+function consultarLogReservas()
+{
+    let tit = document.createElement("h2");
+    tit.innerHTML = "<p>Registro de reservas del hotel</p>";
+    let cuerpo2 = document.getElementsByClassName("cuerpo");
+    tit.className = "titulo";
+    cuerpo2[0].append(tit);
+
+    let tabla1 = document.createElement("table");
+    tabla1.className = "table table-striped thead-light";
+    let contenidoTabla = document.createElement("tbody");
+
+    let rowTitle = document.createElement("tr");
+    rowTitle.innerHTML = `
+    <th>Nombre</th>
+    <th>Nacionalidad</th>
+    <th>Email</th>
+    <th>Check In</th>
+    <th>Check Out</th>
+    <th>Precio</th>
+    <th>Vigente</th>`;
+    contenidoTabla.appendChild(rowTitle);
+
+    for(const log of logReservas)
+    {
+        let row = document.createElement("tr");
+        row.innerHTML = `
+        <td>${log.nombre}</td>
+        <td>${log.nacionalidad}</td>
+        <td>${log.email}</td>
+        <td>${log.cIn}</td>
+        <td>${log.out}</td>
+        <td>${log.monto}</td>
+        <td>${log.vigente}</td>`;
+        contenidoTabla.appendChild(row);
+    }
+    tabla1.appendChild(contenidoTabla);
+
+    let cuerpo1 = document.getElementById("cuerpoPrinc");      // Lugar a asignar la tabla
+    cuerpo1.appendChild(tabla1);
+}
+
 
 // Inicio
 let inicio;
 function iniciarSimulador()
 {
-    inicio = parseInt(prompt("Ingrese el número de la opción deseada: \n1. Realizar una reserva \n2. Verificar una reserva \n3. Cancelar una reserva"));
+    inicio = parseInt(prompt("Ingrese el número de la opción deseada: \n1. Realizar una reserva \n2. Verificar una reserva \n3. Cancelar una reserva \n4. Consultar reservas en libros"));
 }
-
 
 // Menú inicial
 alert("Buenvenido a nuestro Hotel. \nEstarás entrado a nuestro motor de reservas.");
@@ -266,6 +315,10 @@ else if(inicio == 2)
 else if(inicio == 3)
 {
     cancelarReserva();
+}
+else if(inicio == 4)
+{
+    consultarLogReservas();
 }
 else
 {
