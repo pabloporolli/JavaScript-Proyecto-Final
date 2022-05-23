@@ -371,12 +371,6 @@ html {
 
 /* Comienzan los estilos de la demo */
 
-.box{
-  font-size: 1.5rem;
-  padding: 0.5rem;
-}
-
-
 .titleDemo{
   font-size: 2rem;
   margin-top: 7rem;
@@ -384,7 +378,6 @@ html {
   text-transform: uppercase;
   letter-spacing: 0.2rem;
   font-weight: 600;
-  text-decoration:;
 }
 
 .contenedorDemo{
@@ -395,22 +388,87 @@ html {
 
 .caja{
   display: flex;
-  width: 35%;
+  width: 30rem;
 }
 
-.caja2{
-  display: flex;
-  width: 35%;
-
-}
 
 .inOut{
   display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+}
+
+#contenedor1, #contenedor2, #contenedor3{
+  display: flex;
+  margin: 1rem;
+  align-items: center;
+}
+
+.box{
+  width: 120px;
+  display: flex;
+  justify-content: center;
+  align-content: stretch;
+  font-size: 1.5rem;
+  padding: 1rem;
+}
+
+.dia{
+  display: flex;
+  align-items: center;
+}
+
+.cardHabitaciones{
+  width: 45%;
+  margin-left: 3rem;
+}
+
+.cardHabitaciones2{
+  display: flex;
   flex-direction: row;
 }
 
-#contenedor1, #contenedor2{
-  display:flex;
-  flex-direction: row;
-  justify-content: flex-start;
+.cardTextos{
+  margin-left: 1rem;
 }
+
+#cardBotonStandard, #cardBotonSuperior, #cardBotonSuite{
+  width: 10rem;
+  height: 4vh;
+  margin-top: 2rem;
+  text-transform: uppercase;
+}
+
+.mostrar{
+  font-size: 2rem;
+  margin: 3rem; 
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-weight: 600;
+}
+
+.mostrarTitulo{
+  font-size: 2rem;
+  margin: 3rem; 
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-weight: 600;
+}
+
+.mostrarTitulo h4{
+  margin-top: 3rem;
+  text-decoration: underline;
+  color: grey;
+}
+
+#botonNuevaReserva{
+  width: auto;
+  height: 5vh;
+  margin-top: 2rem;
+  text-transform: uppercase;
+  margin: 3rem;
+  font-size: 1.7rem;
+  padding: 1rem;
+  background-color: darkblue;
+}
+
