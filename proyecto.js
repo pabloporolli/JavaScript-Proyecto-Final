@@ -300,3 +300,12 @@ function reset()
 {
     ingresarFechas(e);
 }
+
+
+ /* Ocultar inputs de fechas
+    function ocultarDateInputs()
+    {
+        let inputFechas = document.getElementById("inputFechas");
+        inputFechas.classList.toggle("ocultar");
+    }
+    */

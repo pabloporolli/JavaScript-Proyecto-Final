@@ -461,7 +461,7 @@ html {
   color: grey;
 }
 
-#botonNuevaReserva{
+.botonConfirmarReserva{
   width: auto;
   height: 5vh;
   margin-top: 2rem;
@@ -469,6 +469,45 @@ html {
   margin: 3rem;
   font-size: 1.7rem;
   padding: 1rem;
-  background-color: darkblue;
+  background-color: black;
 }
 
+.ocultar{
+  display: none;
+}
+
+.inputNombre{
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  margin: 3rem;
+  font-size: 1.7rem;
+  padding: 1rem;
+}
+
+.inputNombre div{
+  margin-top: 1rem;
+}
+
+.inputNombre input{
+  height: 4vh;
+}
+
+.inputNombre div select{
+  height: 4vh;
+}
+
+.tarjetaCredito{
+  display: flex;
+  flex-direction: column;
+  font-size: 1.7rem;
+  margin-left: 3rem;
+}
+
+.tarjetaCredito div label{
+  margin-top: 2rem;
+}
+
+.tarjetaCredito div input{
+  height: 4vh;
+}
