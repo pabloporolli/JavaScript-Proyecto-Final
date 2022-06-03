@@ -33,18 +33,12 @@ class Reservas {
         this.pais = pais;
         this.ciudad = ciudad;
         this.direccion = direccion;
+        this.ingreso = ingreso;
+        this.out = out;
     }
 }
 
-if (localStorage.getItem("reservas") != null)
-{
-    reservas = JSON.parse(localStorage.getItem("reservas"));
-}
-else
-{
-    reservas = [];
-}
-
+reservas = JSON.parse(localStorage.getItem("reservas")) || []; 
 
 // Solicitar fechas de estadía (supone que todos los meses tienen 30 días)
 
@@ -70,6 +64,10 @@ let pais;
 let ciudad;
 let direccion;
 let telefono;
+let inEstadia;
+let outEstadia;
+let ingreso;
+let out;
 
 
 let boton = document.getElementById("miBoton");
@@ -94,10 +92,12 @@ function ingresarFechas(e)
 
     // Duración estadía
     
-    let inEstadia = Date.parse(fechaIn.value);
-    let outEstadia = Date.parse(fechaOut.value);
+    inEstadia = new Date(fechaIn.value);
+    outEstadia = new Date(fechaOut.value);
     duracionEstadia = Math.abs((inEstadia - outEstadia) / 1000 / 60 / 60 / 24);
     console.log("Duración estadía: " + duracionEstadia);
+    console.log("Fecha In: " + inEstadia);
+    console.log("Fecha out: " + outEstadia);
     elegirHabitacion();
     return duracionEstadia;
 }
@@ -278,12 +278,15 @@ function ingresarFechas(e)
             pais = document.getElementById("inputCountry").value;
             ciudad = document.getElementById("inputCity").value;
             direccion = document.getElementById("inputAddress").value;
-            crearNuevaReserva(nombre, apellido, email, telefono, pais, ciudad, direccion);
+            //agregar fecha in y out
+            ingreso = inEstadia;
+            out = outEstadia;
+            crearNuevaReserva(nombre, apellido, email, telefono, pais, ciudad, direccion, ingreso, out);
         }
     }
 
 // Crear nueva reserva
-function crearNuevaReserva(nombre, apellido, email, telefono, pais, ciudad, direccion)
+function crearNuevaReserva(nombre, apellido, email, telefono, pais, ciudad, direccion, ingreso, out)
 {
     console.log("Nombre: " + nombre);
     console.log("Apellido: " + apellido);
@@ -296,7 +299,9 @@ function crearNuevaReserva(nombre, apellido, email, telefono, pais, ciudad, dire
         telefono: telefono,
         pais: pais,
         ciudad: ciudad,
-        direccion: direccion
+        direccion: direccion,
+        ingreso: ingreso,
+        out: out
     };
 
 reservas.push(new Reservas(nuevaReserva));
@@ -328,14 +333,7 @@ formaDePago();
 
         let formaPagoSeleccionada = document.getElementById("formaPago");
         formaPagoSeleccionada.onchange = () => {
-            if(formaPagoSeleccionada.value == "Tarjeta de crédito")
-            {
-                mostrarTarjeta();
-            }
-            else
-            {
-                mostrarTransferencia();
-            }
+            formaPagoSeleccionada.value == "Tarjeta de crédito" ?  mostrarTarjeta() : mostrarTransferencia();
         }
     }
 
@@ -388,7 +386,14 @@ formaDePago();
         seccionFormaDePago.appendChild(tran);
 
         let botonContinuar2 = document.getElementById("botonContinuar2");
-        botonContinuar2.onclick = () => finalizar();
+        botonContinuar2.onclick = () => {
+            Swal.fire(
+                'Has finalizado tu reserva',
+                'Te esperamos pronto',
+                'success'
+              );
+            finalizar();
+            };
     }
 
 // Finalizar
@@ -414,5 +419,5 @@ function finalizar()
     `;
     let seccionFin = document.getElementById("seccionFinalizar");
     seccionFin.appendChild(fin);
-
+    console.table("reservas");
 }
