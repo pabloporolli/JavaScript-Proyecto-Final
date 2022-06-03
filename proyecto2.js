@@ -420,4 +420,15 @@ function finalizar()
     let seccionFin = document.getElementById("seccionFinalizar");
     seccionFin.appendChild(fin);
     console.table("reservas");
+
+
+// Desestructuración y alias. Se hace sólo a modo de ejercicio.
+const {
+    apellido: huesped,
+    ingreso: llegada,
+    out: salida,
+} = reservas[ultima];
+
+console.log(`El huésped ${huesped} tiene una reserva en el hotel con fecha de llegada ${llegada} y fecha de salida ${salida}`);
+
 }
