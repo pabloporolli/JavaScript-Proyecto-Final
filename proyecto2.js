@@ -43,63 +43,42 @@ reservas = JSON.parse(localStorage.getItem("reservas")) || [];
 // Solicitar fechas de estadía (supone que todos los meses tienen 30 días)
 
 // Fecha In
-let mesIn;
-let diaIn;
-let dateIn;
-let fechaIn;
-let mesOut;
-let diaOut;
-let dateOut;
-let fechaIngreso;
-let precioNoche;
-let duracionEstadia;
-let precioStandard;
-let precioSuperior;
-let precioSuite;
-let total;
-let nombre;
-let apellido;
-let email;
-let pais;
-let ciudad;
-let direccion;
-let telefono;
-let inEstadia;
-let outEstadia;
-let ingreso;
-let out;
+let mesIn, diaIn, dateIn, mesOut, diaOut, dateOut, fechaIngreso, precioNoche, duracionEstadia, precioStandard, precioSuperior, precioSuite, total, nombre, apellido, email, pais, ciudad, direccion, telefono, inEstadia, outEstadia, ingreso, out;
 
 
 let boton = document.getElementById("miBoton");
-fechaIn = document.getElementById("diaIngreso");
-fechaOut = document.getElementById("diaSalida");
+let fechaIn = document.getElementById("diaIngreso");
+let fechaOut = document.getElementById("diaSalida");
 boton.addEventListener("click", ingresarFechas);
 
+const DateTime = luxon.DateTime;
+const Interval = luxon.Interval;
+
+let fechaIn2, fechaOut2, fechaInMostrar, fechaOutMostrar;
 function ingresarFechas(e)
 {
     e.preventDefault();
-    let entra = fechaIn.value;
-    diaIn = parseInt(entra[8] + entra[9]);
-    mesIn = parseInt(entra[5] + entra[6]);
-    console.log(diaIn);
+ 
+    fechaIn = fechaIn.value;
+    fechaOut = fechaOut.value;
+
+    fechaIn2 = new DateTime.fromISO(fechaIn);
+    fechaOut2 = new DateTime.fromISO(fechaOut);
+
+    fechaInMostrar = fechaIn2.toLocaleString(DateTime.DATE_SHORT);
+    fechaOutMostrar = fechaOut2.toLocaleString(DateTime.DATE_SHORT);
+
+    console.log(fechaInMostrar);
+    console.log(fechaOutMostrar);
+
+    duracionEstadia = Interval.fromDateTimes(fechaIn2, fechaOut2);
+    duracionEstadia = duracionEstadia.length('days');
+
+    console.log("Duración estadía: " + duracionEstadia);
+    mesIn = fechaIn2.month;
     console.log(mesIn);
 
-    let sale = fechaOut.value;
-    diaOut = parseInt(sale[8] + sale[9]);
-    mesOut = parseInt(sale[5] + sale[6]);
-    console.log(diaOut);
-    console.log(mesOut);
-
-    // Duración estadía
-    
-    inEstadia = new Date(fechaIn.value);
-    outEstadia = new Date(fechaOut.value);
-    duracionEstadia = Math.abs((inEstadia - outEstadia) / 1000 / 60 / 60 / 24);
-    console.log("Duración estadía: " + duracionEstadia);
-    console.log("Fecha In: " + inEstadia);
-    console.log("Fecha out: " + outEstadia);
     elegirHabitacion();
-    return duracionEstadia;
 }
 
 
@@ -174,7 +153,7 @@ function ingresarFechas(e)
     // Calcular Precio Estadia
     function calcularPrecioEstadia(precio, duracion, categoria)
     {
-        total = precio * duracion;
+        total = (precio * duracion).toFixed(2);
         console.log("Total reserva: " + total);
         mostrarReserva(total, categoria);
         return total;
@@ -189,8 +168,8 @@ function ingresarFechas(e)
             <h4>Su reserva</h4>
         </div>
         <div class="mostrar">
-            <p>Check in: ${fechaIn.value}</p>
-            <p>Check out: ${fechaOut.value}</p>
+            <p>Check in: ${fechaInMostrar}</p>
+            <p>Check out: ${fechaOutMostrar}</p>
             <p>Estadía: ${duracionEstadia} noches</p>
             <p>Habitación: ${categoria}</p>
             <p>Precio total: ${precioAMostrar}</p>
@@ -213,7 +192,25 @@ function ingresarFechas(e)
         confirmaReserva.appendChild(confirma);
 
         let botonConfirmar = document.getElementById("botonConfirmar");
-        botonConfirmar.onclick = () => ingresarDatos();
+        botonConfirmar.onclick = () => {
+        
+            Swal.fire({
+                title: 'Confirmacion',
+                text: "¿Querés confirmar la reserva?",
+                icon: 'warning',
+                showDenyButton: true,
+                confirmButtonColor: '#0C120C',
+                cancelButtonColor: '#C20114',
+                confirmButtonText: 'Sí'
+              }).then((result) => {
+                if (result.isDenied) {
+                  Swal.fire(
+                    window.location = "index.html"
+                  )
+                }
+                })
+            ingresarDatos();
+        }
     }
 
     // Ingresar datos
@@ -279,8 +276,8 @@ function ingresarFechas(e)
             ciudad = document.getElementById("inputCity").value;
             direccion = document.getElementById("inputAddress").value;
             //agregar fecha in y out
-            ingreso = inEstadia;
-            out = outEstadia;
+            ingreso = fechaInMostrar;
+            out = fechaOutMostrar;
             crearNuevaReserva(nombre, apellido, email, telefono, pais, ciudad, direccion, ingreso, out);
         }
     }
@@ -364,7 +361,14 @@ formaDePago();
         seccionFormaDePago.appendChild(tarjeta);
 
         let botonPagar = document.getElementById("botonPagar");
-        botonPagar.onclick = () => finalizar();
+        botonPagar.onclick = () => {
+            Swal.fire(
+                'Has finalizado tu reserva',
+                'Te esperamos pronto',
+                'success'
+              );
+            finalizar();
+            };
     }
 
     // Transferencia bancaria
@@ -408,8 +412,8 @@ function finalizar()
     <h2 class="titulo">Muchas gracias por confiar en nosotros</h2>
     <p>Resumen de su reserva</p>
     <p>Apellido: ${reservas[ultima].apellido}</p>
-    <p>Check In: ${diaIn}/${mesIn}</p>
-    <p>Check Out: ${diaOut}/${mesOut}</p>
+    <p>Check In: ${fechaInMostrar}</p>
+    <p>Check Out: ${fechaOutMostrar}</p>
     <p>${duracionEstadia} Noches</p>
     <p>Precio: ${total}</p>
     <a href="index.html">
