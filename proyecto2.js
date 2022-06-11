@@ -22,11 +22,11 @@ const habitaciones = [
     },
 ];
 
-// Registro de reservas
 let reservas;
 class Reservas {
     constructor (reserva)
     {
+        this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
@@ -35,14 +35,12 @@ class Reservas {
         this.direccion = direccion;
         this.ingreso = ingreso;
         this.out = out;
+        this.precio = precio;
     }
 }
 
 reservas = JSON.parse(localStorage.getItem("reservas")) || []; 
 
-// Solicitar fechas de estadía (supone que todos los meses tienen 30 días)
-
-// Fecha In
 let mesIn, diaIn, dateIn, mesOut, diaOut, dateOut, fechaIngreso, precioNoche, duracionEstadia, precioStandard, precioSuperior, precioSuite, total, nombre, apellido, email, pais, ciudad, direccion, telefono, inEstadia, outEstadia, ingreso, out;
 
 
@@ -191,6 +189,31 @@ function ingresarFechas(e)
         let confirmaReserva = document.getElementById("confirmaReserva");
         confirmaReserva.appendChild(confirma);
 
+        // Cotizar en AR$
+        let pesos = document.createElement("div");
+        pesos.innerHTML = `
+        <button type="button" class="btn btn-dark botonConfirmarReserva" id="botonPesos">Cotizar en AR$</button>
+        `;
+        let cotizarPesos = document.getElementById("confirmaReserva");
+        cotizarPesos.appendChild(pesos);
+
+        const URL = "https://v6.exchangerate-api.com/v6/634006602d437832e2894b18/latest/USD";
+
+        document.querySelector("#botonPesos").onclick = () => {
+            fetch(URL)
+                .then ((resp) => resp.json())
+                .then ((coti) => {
+                    let tc = coti.conversion_rates.ARS;
+                    let totalenPesos = (total * tc).toFixed(2);
+                    document.querySelector("#muestraPrecioEnARS").innerHTML = `
+                    <div class="mostrarTitulo">
+                    <h3>Monto en Pesos Argentinos</h3>
+                    <p>ARS ${totalenPesos}</p> 
+                    `
+                })
+        }
+
+
         let botonConfirmar = document.getElementById("botonConfirmar");
         botonConfirmar.onclick = () => {
         
@@ -213,6 +236,7 @@ function ingresarFechas(e)
         }
     }
 
+let id;
     // Ingresar datos
     function ingresarDatos()
     {
@@ -275,21 +299,23 @@ function ingresarFechas(e)
             pais = document.getElementById("inputCountry").value;
             ciudad = document.getElementById("inputCity").value;
             direccion = document.getElementById("inputAddress").value;
-            //agregar fecha in y out
             ingreso = fechaInMostrar;
             out = fechaOutMostrar;
-            crearNuevaReserva(nombre, apellido, email, telefono, pais, ciudad, direccion, ingreso, out);
+            precio = total;
+            id = reservas.length + 1;
+            crearNuevaReserva(id, nombre, apellido, email, telefono, pais, ciudad, direccion, ingreso, out, precio);
         }
     }
 
 // Crear nueva reserva
-function crearNuevaReserva(nombre, apellido, email, telefono, pais, ciudad, direccion, ingreso, out)
+function crearNuevaReserva(id, nombre, apellido, email, telefono, pais, ciudad, direccion, ingreso, out, precioTotal)
 {
     console.log("Nombre: " + nombre);
     console.log("Apellido: " + apellido);
     console.log("Email: " + email);
 
     let nuevaReserva = {
+        id: id,
         nombre: nombre,
         apellido: apellido,
         email: email,
@@ -298,7 +324,8 @@ function crearNuevaReserva(nombre, apellido, email, telefono, pais, ciudad, dire
         ciudad: ciudad,
         direccion: direccion,
         ingreso: ingreso,
-        out: out
+        out: out,
+        precio: precioTotal,
     };
 
 reservas.push(new Reservas(nuevaReserva));
@@ -434,5 +461,160 @@ const {
 } = reservas[ultima];
 
 console.log(`El huésped ${huesped} tiene una reserva en el hotel con fecha de llegada ${llegada} y fecha de salida ${salida}`);
+}
 
+// OTRA FUNCIÓN
+// Consulta de Reservas
+let botonConsultas = document.getElementById("botonConsultaReservas");
+botonConsultas.onclick = () => consultaReservas();
+
+function consultaReservas()
+{
+    let tituloConsultas = document.createElement("h3");
+    tituloConsultas.innerHTML = `
+        <h3 class="titleDemo">Reservas en Libros</h3>
+    `;
+    let seccionConsultas = document.getElementById("seccionConsultas");
+    seccionConsultas.appendChild(tituloConsultas);
+
+    let tablaConsultas = document.createElement("table");
+    tablaConsultas.className = "table table-striped thead-light";
+    let contenidoTabla = document.createElement("tbody");
+
+    let rowTitle = document.createElement("tr");
+    rowTitle.innerHTML = `
+        <td>ID</td>
+        <td>Nombre</td>
+        <td>Apellido</td>
+        <td>Check In</td>
+        <td>Check Out</td>
+        <td>Total</td>
+    `;
+    contenidoTabla.appendChild(rowTitle);
+
+    for (const rese of reservas)
+    {
+        let row = document.createElement("tr");
+        row.innerHTML = `
+        <td>${rese.id}</td>
+        <td>${rese.nombre}</td>
+        <td>${rese.apellido}</td>
+        <td>${rese.ingreso}</td>
+        <td>${rese.out}</td>
+        <td>${rese.precio}</td>
+        `;
+        contenidoTabla.appendChild(row);
+    }
+    tablaConsultas.appendChild(contenidoTabla);
+
+    seccionConsultas.appendChild(tablaConsultas);
+
+}
+
+
+// OTRA FUNCIÓN
+// Cancelar reservas
+
+let botonCancelar = document.getElementById("botonCancelarReservas");
+botonCancelar.onclick = () => ingresarReservaACancelar();
+
+function ingresarReservaACancelar()
+{
+    let tituloCancelar = document.createElement("h3");
+    tituloCancelar.innerHTML = `
+        <h3 class="titleDemo">Ingrese el apellido de la reserva a cancelar</h3>
+    `;
+    let seccionCancelar = document.getElementById("seccionCancelar");
+    seccionCancelar.appendChild(tituloCancelar);
+
+    let casillero = document.createElement("div");
+    casillero.innerHTML = `
+    <input type="text" class="form-control dia w-25" id="nombreACancelar" aria-label="Large" placeholder="alvarez" aria-describedby="inputGroup-sizing-sm"></input>
+    <button type="button" class="btn btn-dark botonConfirmarReserva" id="botonContinuarCancelar">Continuar</button>
+    `;
+    seccionCancelar.appendChild(casillero);
+
+    document.querySelector("#botonContinuarCancelar").onclick = () => {
+        let nombreACancelar = document.getElementById("nombreACancelar").value;
+        console.log(nombreACancelar);
+        console.table(reservas);
+        mostrarReservasACancelar(nombreACancelar);
+    }
+}
+
+let listadoReservasCancelar = [];
+function mostrarReservasACancelar(nombreACancelar)
+{
+    const encontrado = reservas.filter( (rese) => rese.apellido == nombreACancelar);
+    if(encontrado != 0){
+        for (i = 0; i < encontrado.length; i++)
+        {
+            let reservaEncontrada = {
+                    idC: encontrado[i].id,
+                    apellidoC: encontrado[i].apellido,
+                    inC: encontrado[i].ingreso,
+                    outC: encontrado[i].out,
+                    precioC: encontrado[i].precio,
+                };
+            listadoReservasCancelar.push(reservaEncontrada);
+        };
+        console.table(listadoReservasCancelar);
+        
+        let tituloCancelar = document.createElement("h3");
+        tituloCancelar.innerHTML = `
+            <h3 class="titleDemo">¿Desea cancelar una de las siguientes reservas?</h3>
+        `;
+        let seccionListaCancelar = document.getElementById("seccionListaCancelar");
+        seccionListaCancelar.appendChild(tituloCancelar);
+    
+        let tablaCancelar = document.createElement("table");
+        tablaCancelar.className = "table table-striped thead-light";
+        let contenidoTablaCancelar = document.createElement("tbody");
+    
+        let rowTitle = document.createElement("tr");
+        rowTitle.innerHTML = `
+            <td>ID</td>
+            <td>Apellido</td>
+            <td>Check In</td>
+            <td>Check Out</td>
+            <td>Total</td>
+            <td>¿Cancelar?</td>
+        `;
+        contenidoTablaCancelar.appendChild(rowTitle);
+    
+        let indice;
+        for (const rese of listadoReservasCancelar)
+        {
+            let row = document.createElement("tr");
+            row.innerHTML = `
+            <td>${rese.idC}</td>
+            <td>${rese.apellidoC}</td>
+            <td>${rese.inC}</td>
+            <td>${rese.outC}</td>
+            <td>${rese.precioC}</td>
+            <td><button type="button" class="btn btn-dark botonCancelar" onclick="cancelarReserva(${rese.idC})">Cancelar</button></td>
+            `;
+            contenidoTablaCancelar.appendChild(row);
+            console.log(rese.idC);
+
+            // document.getElementById("1").onclick = () => {
+            //     alert("funciona");
+            //     cancelarReserva(rese.idC);
+            // };
+
+        }
+        tablaCancelar.appendChild(contenidoTablaCancelar);
+    
+        seccionListaCancelar.appendChild(tablaCancelar);
+
+    };
+};
+  // El dato que tiene que recibir cancelarReserva es el indexOf del array reservas
+function cancelarReserva(num)
+{
+        console.log("Id de la rva: " + num);
+        num = num - 1;
+        reservas.splice(num,1);
+        localStorage.setItem("reservas", JSON.stringify(reservas));
+        console.table(reservas);
 }

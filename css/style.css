@@ -511,3 +511,11 @@ html {
 .tarjetaCredito div input{
   height: 4vh;
 }
+
+.botonCancelar{
+  width: auto;
+  height: auto;
+  font-size: 0.4rem;
+  padding: 0.3rem;
+  background-color: black;
+}
