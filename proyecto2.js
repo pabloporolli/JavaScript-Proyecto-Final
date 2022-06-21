@@ -1,24 +1,29 @@
+let mesIn, diaIn, dateIn, mesOut, diaOut, dateOut, fechaIngreso, precioNoche, duracionEstadia, precioStandard, precioSuperior, precioSuite, total, nombre, apellido, email, telefono, inEstadia, outEstadia, ingreso, out;
+
 const habitaciones = [
 {
     nombre: "Standard",
     ubicacion: "Pisos inferiores",
     superficie: "30 metros cuadrados",
-    img: "/img/standard.jpg",
+    img: "img/standard.jpg",
     cardButtom: "cardBotonStandard",
+    precio: precioStandard,
 },
 {
     nombre: "Superior",
     ubicacion: "Pisos superiores",
     superficie: "35 metros cuadrados",
-    img: "/img/superior.jpg",
+    img: "img/superior.jpg",
     cardButtom: "cardBotonSuperior",
+    precio: precioSuperior,
 },
     {
         nombre: "Suite",
         ubicacion: "Pisos superiores",
         superficie: "50 metros cuadrados",
-        img: "/img/suite.jpg",
+        img: "img/suite.jpg",
         cardButtom: "cardBotonSuite",
+        precio: precioSuite,
     },
 ];
 
@@ -30,9 +35,6 @@ class Reservas {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
-        this.pais = pais;
-        this.ciudad = ciudad;
-        this.direccion = direccion;
         this.ingreso = ingreso;
         this.out = out;
         this.precio = precio;
@@ -41,16 +43,27 @@ class Reservas {
 
 reservas = JSON.parse(localStorage.getItem("reservas")) || []; 
 
-let mesIn, diaIn, dateIn, mesOut, diaOut, dateOut, fechaIngreso, precioNoche, duracionEstadia, precioStandard, precioSuperior, precioSuite, total, nombre, apellido, email, pais, ciudad, direccion, telefono, inEstadia, outEstadia, ingreso, out;
-
 
 let boton = document.getElementById("miBoton");
 let fechaIn = document.getElementById("diaIngreso");
 let fechaOut = document.getElementById("diaSalida");
-boton.addEventListener("click", ingresarFechas);
 
 const DateTime = luxon.DateTime;
 const Interval = luxon.Interval;
+
+fechaIn.addEventListener("change", fechaMinima);
+
+function fechaMinima ()
+{
+    console.log(fechaIn.value);
+    let fechaMin = new DateTime.fromISO(fechaIn.value).plus({days: 1});
+    console.log(fechaMin);
+    let fechaMinLlevar = fechaMin.toISODate(DateTime.local);
+    console.log("Llevar " + fechaMinLlevar);
+    fechaOut.min = fechaMinLlevar;
+}
+
+boton.addEventListener("click", ingresarFechas);
 
 let fechaIn2, fechaOut2, fechaInMostrar, fechaOutMostrar;
 function ingresarFechas(e)
@@ -80,235 +93,301 @@ function ingresarFechas(e)
 }
 
 
-    // Calcular precio noche
-    function calcularPrecioNoche()
-   {
-        switch (mesIn)
-        {
-            case 1: precioNoche = 100; break;
-            case 2: precioNoche = 110; break;
-            case 3: precioNoche = 150; break;
-            case 4: precioNoche = 145; break;
-            case 5: precioNoche = 115; break;
-            case 6: precioNoche = 108; break;
-            case 7: precioNoche = 112; break;
-            case 8: precioNoche = 147; break;
-            case 9: precioNoche = 150; break;
-            case 10: precioNoche = 155; break;
-            case 11: precioNoche = 160; break;
-            case 12: precioNoche = 180; break;
-        }
-
-        // Precios por categoria
-
-        precioStandard = precioNoche;
-        precioSuperior = precioNoche * 1.15;
-        precioSuite = precioNoche * 1.4;
-   }
-
-
-    // Mostrar categorías
-
-    function elegirHabitacion()
+// Calcular precio noche
+function calcularPrecioNoche()
+{
+    switch (mesIn)
     {
-        calcularPrecioNoche();
-        let cate = document.getElementById("categorias");
+        case 1: precioNoche = 100; break;
+        case 2: precioNoche = 110; break;
+        case 3: precioNoche = 150; break;
+        case 4: precioNoche = 145; break;
+        case 5: precioNoche = 115; break;
+        case 6: precioNoche = 108; break;
+        case 7: precioNoche = 112; break;
+        case 8: precioNoche = 147; break;
+        case 9: precioNoche = 150; break;
+        case 10: precioNoche = 155; break;
+        case 11: precioNoche = 160; break;
+        case 12: precioNoche = 180; break;
+    }
 
-        for(const habitacion of habitaciones)
-        {
-            let card = document.createElement("div");
+    // Precios por categoria
 
-            card.innerHTML = `
-            <div class="card-deck cardHabitaciones titleDemo">
-                <div class="card cardHabitaciones2">
-                    <img class="card-img-top" src="${habitacion.img}" alt="Card image cap">
-                    <div class="card-body cardTextos">
-                    <h5 class="card-title cardTitulo">${habitacion.nombre}</h5>
-                    <p class="card-text">${habitacion.superficie}</p>
-                    <p class="card-text"><small class="text-muted">${habitacion.ubicacion}</small></p>
-                    <button type="button" class="btn btn-dark" id="${habitacion.cardButtom}">Book Now</button>
-                </div>
+    precioStandard = precioNoche.toFixed(2);
+    precioSuperior = (precioNoche * 1.15).toFixed(2);
+    precioSuite = (precioNoche * 1.4).toFixed(2);
+
+    habitaciones[0].precio = precioStandard;
+    habitaciones[1].precio = precioSuperior;
+    habitaciones[2].precio = precioSuite;
+}
+
+
+// Mostrar categorías
+
+function elegirHabitacion()
+{
+    let ocultaConsultar = document.getElementById("consultarReservas");
+    let ocultaCancelar = document.getElementById("cancelarReservas");
+    ocultaConsultar.className += " ocultar";
+    ocultaCancelar.className += " ocultar";
+
+    calcularPrecioNoche();
+    let cate = document.getElementById("categorias");
+
+    for(const habitacion of habitaciones)
+    {
+        let card = document.createElement("div");
+
+        card.innerHTML = `
+        <div class="card-deck cardHabitaciones titleDemo">
+            <div class="card cardHabitaciones2">
+                <img class="card-img-top" src="${habitacion.img}" alt="Card image cap">
+                <div class="card-body cardTextos">
+                <h5 class="card-title cardTitulo">${habitacion.nombre}</h5>
+                <p class="card-text">${habitacion.superficie}</p>
+                <p class="card-text"><small class="text-muted">${habitacion.ubicacion}</small></p>
+                <p class="card-text"><small class="text">USD ${habitacion.precio} por noche</small></p>
+                <button type="button" class="btn btn-dark" id="${habitacion.cardButtom}">Book Now</button>
             </div>
-            `;
-            cate.appendChild(card);
-        }
-
-        // Elegir habitación
-
-        let botonStandard = document.getElementById("cardBotonStandard");
-        let botonSuperior = document.getElementById("cardBotonSuperior");
-        let botonSuite = document.getElementById("cardBotonSuite");
-
-        let standard = "standard";
-        let superior = "superior";
-        let suite = "suite";
-
-        botonStandard.addEventListener("click", () => calcularPrecioEstadia(precioStandard, duracionEstadia, standard));
-        botonSuperior.addEventListener("click", () => calcularPrecioEstadia(precioSuperior, duracionEstadia, superior));
-        botonSuite.addEventListener("click", () => calcularPrecioEstadia(precioSuite, duracionEstadia, suite));
-    }
-
-    // Calcular Precio Estadia
-    function calcularPrecioEstadia(precio, duracion, categoria)
-    {
-        total = (precio * duracion).toFixed(2);
-        console.log("Total reserva: " + total);
-        mostrarReserva(total, categoria);
-        return total;
-    }
-
-    function mostrarReserva(precioAMostrar, categoria)
-    {
-        let resumenReserva = document.createElement("div");
-        resumenReserva.innerHTML = `
-        <div class="mostrarTitulo">
-            <h3>Recapitulativo</h3>
-            <h4>Su reserva</h4>
-        </div>
-        <div class="mostrar">
-            <p>Check in: ${fechaInMostrar}</p>
-            <p>Check out: ${fechaOutMostrar}</p>
-            <p>Estadía: ${duracionEstadia} noches</p>
-            <p>Habitación: ${categoria}</p>
-            <p>Precio total: ${precioAMostrar}</p>
         </div>
         `;
+        cate.appendChild(card);
+    }
+
+    // Elegir habitación
+
+    let botonStandard = document.getElementById("cardBotonStandard");
+    let botonSuperior = document.getElementById("cardBotonSuperior");
+    let botonSuite = document.getElementById("cardBotonSuite");
+
+    let standard = "standard";
+    let superior = "superior";
+    let suite = "suite";
+
+    botonStandard.addEventListener("click", () => calcularPrecioEstadia(precioStandard, duracionEstadia, standard));
+    botonSuperior.addEventListener("click", () => calcularPrecioEstadia(precioSuperior, duracionEstadia, superior));
+    botonSuite.addEventListener("click", () => calcularPrecioEstadia(precioSuite, duracionEstadia, suite));
+}
+
+// Calcular Precio Estadia
+function calcularPrecioEstadia(precio, duracion, categoria)
+{
+    total = (precio * duracion).toFixed(2);
+    console.log("Total reserva: " + total);
+    mostrarReserva(total, categoria);
+    return total;
+}
+
+function mostrarReserva(precioAMostrar, categoria)
+{
+    let resumenReserva = document.createElement("div");
+    resumenReserva.innerHTML = `
+    <div class="mostrarTitulo">
+        <h3>Recapitulativo</h3>
+        <h4>Su reserva</h4>
+    </div>
+    <div class="mostrar">
+        <p>Check in: ${fechaInMostrar}</p>
+        <p>Check out: ${fechaOutMostrar}</p>
+        <p>Estadía: ${duracionEstadia} noches</p>
+        <p>Habitación: ${categoria}</p>
+        <p>Precio total: ${precioAMostrar}</p>
+    </div>
+    `;
     
-        let muestraPrecio = document.getElementById("muestraPrecio");
-        muestraPrecio.appendChild(resumenReserva);
-        confirmarReserva();
+    let muestraPrecio = document.getElementById("muestraPrecio");
+    muestraPrecio.appendChild(resumenReserva);
+    confirmarReserva();
+}
+
+// Botón confirmar reserva
+function confirmarReserva()
+{
+    let confirma = document.createElement("div");
+    confirma.innerHTML = `
+    <button type="button" class="btn btn-dark botonConfirmarReserva" id="botonConfirmar">Confirmar reserva</button>
+    `;
+    let confirmaReserva = document.getElementById("confirmaReserva");
+    confirmaReserva.appendChild(confirma);
+
+    // Cotizar en AR$
+    let pesos = document.createElement("div");
+    pesos.innerHTML = `
+    <button type="button" class="btn btn-dark botonConfirmarReserva" id="botonPesos">Cotizar en AR$</button>
+    `;
+    let cotizarPesos = document.getElementById("confirmaReserva");
+    cotizarPesos.appendChild(pesos);
+
+    const URL = "https://v6.exchangerate-api.com/v6/634006602d437832e2894b18/latest/USD";
+
+    document.querySelector("#botonPesos").onclick = () => {
+        fetch(URL)
+            .then ((resp) => resp.json())
+            .then ((coti) => {
+                let tc = coti.conversion_rates.ARS;
+                let totalenPesos = (total * tc).toFixed(2);
+                document.querySelector("#muestraPrecioEnARS").innerHTML = `
+                <div class="mostrarTitulo">
+                <h3>Monto en Pesos Argentinos</h3>
+                <p>ARS ${totalenPesos}</p> 
+                `
+            })
     }
 
-    // Botón confirmar reserva
-    function confirmarReserva()
-    {
-        let confirma = document.createElement("div");
-        confirma.innerHTML = `
-        <button type="button" class="btn btn-dark botonConfirmarReserva" id="botonConfirmar">Confirmar reserva</button>
-        `;
-        let confirmaReserva = document.getElementById("confirmaReserva");
-        confirmaReserva.appendChild(confirma);
 
-        // Cotizar en AR$
-        let pesos = document.createElement("div");
-        pesos.innerHTML = `
-        <button type="button" class="btn btn-dark botonConfirmarReserva" id="botonPesos">Cotizar en AR$</button>
-        `;
-        let cotizarPesos = document.getElementById("confirmaReserva");
-        cotizarPesos.appendChild(pesos);
-
-        const URL = "https://v6.exchangerate-api.com/v6/634006602d437832e2894b18/latest/USD";
-
-        document.querySelector("#botonPesos").onclick = () => {
-            fetch(URL)
-                .then ((resp) => resp.json())
-                .then ((coti) => {
-                    let tc = coti.conversion_rates.ARS;
-                    let totalenPesos = (total * tc).toFixed(2);
-                    document.querySelector("#muestraPrecioEnARS").innerHTML = `
-                    <div class="mostrarTitulo">
-                    <h3>Monto en Pesos Argentinos</h3>
-                    <p>ARS ${totalenPesos}</p> 
-                    `
-                })
-        }
-
-
-        let botonConfirmar = document.getElementById("botonConfirmar");
-        botonConfirmar.onclick = () => {
+    let botonConfirmar = document.getElementById("botonConfirmar");
+    botonConfirmar.onclick = () => {
         
-            Swal.fire({
-                title: 'Confirmacion',
-                text: "¿Querés confirmar la reserva?",
-                icon: 'warning',
-                showDenyButton: true,
-                confirmButtonColor: '#0C120C',
-                cancelButtonColor: '#C20114',
-                confirmButtonText: 'Sí'
-              }).then((result) => {
-                if (result.isDenied) {
-                  Swal.fire(
-                    window.location = "index.html"
-                  )
-                }
-                })
-            ingresarDatos();
-        }
+        Swal.fire({
+            title: 'Confirmacion',
+            text: "¿Querés confirmar la reserva?",
+            icon: 'warning',
+            showDenyButton: true,
+            confirmButtonColor: '#0C120C',
+            cancelButtonColor: '#C20114',
+            confirmButtonText: 'Sí'
+            }).then((result) => {
+            if (result.isDenied) {
+                Swal.fire(
+                window.location = "index.html"
+                )
+            }
+            })
+        ingresarDatos();
     }
+}
 
 let id;
-    // Ingresar datos
-    function ingresarDatos()
+// Ingresar datos
+function ingresarDatos()
+{
+    let ingresoDatos = document.createElement("div");
+    ingresoDatos.innerHTML = `
+    <form class="inputNombre" id="botonContinuar">
+
+    <div class="form-group">
+        <label for="inputAddress" id="fN">First Name</label>
+        <input type="text" class="form-control" id="firstName" placeholder="Julián">
+    </div>
+      
+    <div class="form-group">
+        <label for="inputAddress" id="lN">Last Name</label>
+        <input type="text" class="form-control" id="lastName" placeholder="Álvarez">
+    </div>
+        
+    <div class="form-row">
+        <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" placeholder="julian@river.com">
+        </div>
+    </div>
+      
+    <div class="form-group">
+        <label for="inputAddress2" id="ph">Phone</label>
+        <input type="phone" class="form-control" id="phone" placeholder="+54 11 3636 9898">
+    </div>
+      
+    <button type="submit" class="btn btn-dark botonConfirmarReserva">Continuar</button>
+    </form>
+    `;
+    let seccionIngreso = document.getElementById("seccionIngresoDatos");
+    seccionIngreso.appendChild(ingresoDatos);
+
+    let botonContinuar = document.getElementById("botonContinuar");
+    botonContinuar.addEventListener('submit', tomarValores);
+
+    function tomarValores(e)
     {
-        let ingresoDatos = document.createElement("div");
-        ingresoDatos.innerHTML = `
-        <form class="inputNombre">
+        e.preventDefault();
+        nombre = document.getElementById("firstName").value;
+        apellido = document.getElementById("lastName").value;
+        email = document.getElementById("email").value;
+        telefono = document.getElementById("phone").value;
+        ingreso = fechaInMostrar;
+        out = fechaOutMostrar;
+        precio = total;
+        id = reservas.length + 1;
 
-        <div class="form-group">
-          <label for="inputAddress">First Name</label>
-          <input type="text" class="form-control" id="firstName" placeholder="Julián">
-        </div>
-      
-        <div class="form-group">
-          <label for="inputAddress">Last Name</label>
-          <input type="text" class="form-control" id="lastName" placeholder="Álvarez">
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="julian@river.com">
-            </div>
-        </div>
-      
-        <div class="form-group">
-          <label for="inputAddress2">Phone</label>
-          <input type="phone" class="form-control" id="phone" placeholder="+54 11 3636 9898">
-        </div>
-      
-        <div class="form-group">
-            <label for="inputAddress">Address</label>
-            <input type="text" class="form-control" id="inputAddress" placeholder="Arenales 1111">
-        </div>
-        
-        <div class="form-row">
-            <div class="form-group">
-            <label for="inputCity">City</label>
-            <input type="text" class="form-control" id="inputCity" placeholder="Buenos Aires">
-            </div>
-      
-            <div class="form-row">
-              <div class="form-group">
-              <label for="inputCity">Country</label>
-              <input type="text" class="form-control" id="inputCountry" placeholder="Argentina">
-            </div>
-      
-        </div>
-        <button type="button" class="btn btn-dark botonConfirmarReserva" id="botonContinuar">Continuar</button>
-      </form>
-        `;
-        let seccionIngreso = document.getElementById("seccionIngresoDatos");
-        seccionIngreso.appendChild(ingresoDatos);
+        let alerta = document.createElement("h4");
+        alerta.innerHTML = ``;
+        alerta.className += "alerta";
+        seccionIngreso.appendChild(alerta);
 
-        let botonContinuar = document.getElementById("botonContinuar");
-        botonContinuar.onclick = () => {
-            nombre = document.getElementById("firstName").value;
-            apellido = document.getElementById("lastName").value;
-            email = document.getElementById("email").value;
-            telefono = document.getElementById("phone").value;
-            pais = document.getElementById("inputCountry").value;
-            ciudad = document.getElementById("inputCity").value;
-            direccion = document.getElementById("inputAddress").value;
-            ingreso = fechaInMostrar;
-            out = fechaOutMostrar;
-            precio = total;
-            id = reservas.length + 1;
-            crearNuevaReserva(id, nombre, apellido, email, telefono, pais, ciudad, direccion, ingreso, out, precio);
+        let colorfN = document.getElementById("fN");
+        colorfN.className = " negro";
+        let colorlN = document.getElementById("lN");
+        colorlN.className = " negro";
+        let colorph = document.getElementById("ph");
+        colorph.className = " negro";
+
+        if(!validar(nombre) || nombre == "")
+        {
+            console.log("Nombre incorrecto");
+            colorfN.className = " rojo";
+            alerta.innerHTML = `<p>Ingrese un nombre</p>`;
+        }
+        else if (!validar(apellido) || apellido == "")
+        {
+            console.log("Apellido incorrecto");
+            colorlN.className = " rojo";
+            alerta.innerHTML = `<p>Ingrese un apellido</p>`;
+        }
+        else if (!validarNumero(telefono) || telefono == "")
+        {
+            console.log("Teléfono incorrecto");
+            colorph.className = " rojo";
+            alerta.innerHTML = `<p>Ingrese un teléfono</p>`;
+        }
+        else
+        {
+            crearNuevaReserva(id, nombre, apellido, email, telefono, ingreso, out, precio);
         }
     }
+}
+
+// Validar 
+function validar(nombre)
+{
+    for (let i = 0; i < nombre.length; i++)
+    {
+        if (!isNaN(nombre[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Validar número
+function validarNumero(numero)
+{
+    for (let i = 0; i < numero.length; i++)
+    {
+        if (isNaN(numero[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Validar mail
+function validarMail(email)
+{
+    if (email.includes("@") && email.includes("."))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
 // Crear nueva reserva
-function crearNuevaReserva(id, nombre, apellido, email, telefono, pais, ciudad, direccion, ingreso, out, precioTotal)
+function crearNuevaReserva(id, nombre, apellido, email, telefono, ingreso, out, precioTotal)
 {
     console.log("Nombre: " + nombre);
     console.log("Apellido: " + apellido);
@@ -320,9 +399,6 @@ function crearNuevaReserva(id, nombre, apellido, email, telefono, pais, ciudad, 
         apellido: apellido,
         email: email,
         telefono: telefono,
-        pais: pais,
-        ciudad: ciudad,
-        direccion: direccion,
         ingreso: ingreso,
         out: out,
         precio: precioTotal,
@@ -335,97 +411,138 @@ formaDePago();
 }
 
 
-    // Forma de pago
-    function formaDePago()
-    {
-        let formaPago = document.createElement("div");
-        formaPago.innerHTML = `
-        <div class="formaPago inputNombre">
-            <h3>Forma de pago</h3>
-            <div class="form-group">
-                <label for="formaPago">Elija el método de pago</label>
-                <select class="form-control" id="formaPago">
-                    <option>Elegir opción</option>
-                    <option>Tarjeta de crédito</option>
-                    <option>Transferencia bancaria</option>
-                </select>
-            </div>
+// Forma de pago
+function formaDePago()
+{
+    let formaPago = document.createElement("div");
+    formaPago.innerHTML = `
+    <div class="formaPago inputNombre">
+        <h3>Forma de pago</h3>
+        <div class="form-group">
+            <label for="formaPago">Elija el método de pago</label>
+            <select class="form-control" id="formaPago">
+                <option>Elegir opción</option>
+                <option>Tarjeta de crédito</option>
+                <option>Transferencia bancaria</option>
+            </select>
         </div>
-        `;
-        let secciondeFormaPago = document.getElementById("seccionFormaPago");
-        secciondeFormaPago.appendChild(formaPago);
+    </div>
+    `;
+    let secciondeFormaPago = document.getElementById("seccionFormaPago");
+    secciondeFormaPago.appendChild(formaPago);
 
-        let formaPagoSeleccionada = document.getElementById("formaPago");
-        formaPagoSeleccionada.onchange = () => {
-            formaPagoSeleccionada.value == "Tarjeta de crédito" ?  mostrarTarjeta() : mostrarTransferencia();
-        }
+    let formaPagoSeleccionada = document.getElementById("formaPago");
+    formaPagoSeleccionada.onchange = () => {
+        formaPagoSeleccionada.value == "Tarjeta de crédito" ?  mostrarTarjeta() : mostrarTransferencia();
     }
+}
 
-    // Tarjeta de crédito
-    function mostrarTarjeta()
-    {
-        let tarjeta = document.createElement("div");
-        tarjeta.innerHTML = `
-        <div class="caja">
+// Tarjeta de crédito
+function mostrarTarjeta()
+{
+    let tarjeta = document.createElement("div");
+    tarjeta.innerHTML = `
+    <div class="caja" id="botonPagar">
+    <form>
         <div class="container tarjetaCredito">
-          <div class="tarjetaCredito1">
-            <label for="fname">Full Name</label>
-            <input type="text" class="form-control" id="fname" placeholder="John M. Smith">
-            <label for="cardnumber">Card Number</label>
-            <input type="number" class="form-control" id="cardNumber" placeholder="1234 1234 1234 1234">
-          </div>
-          <div class="tarjetaCredito2">
-            <label for="cvv">CVV</label>
-            <input type="number" class="form-control" id="cNumber" placeholder="123">
-            <label for="exDate">Expiration Date</label>
-            <input type="number" class="form-control" id="exDate" placeholder="12/22">
-          </div>
-        <button type="button" class="btn btn-dark botonConfirmarReserva" id="botonPagar">Pagar</button>
+            <div class="tarjetaCredito1">
+                <label for="fname">Full Name</label>
+                <input type="text" class="form-control" id="fname" placeholder="John M. Smith">
+                <label for="cardnumber">Card Number</label>
+                <input type="number" class="form-control" id="cardNumber" placeholder="1234 1234 1234 1234">
+            </div>
+            <div class="tarjetaCredito2">
+                <label for="cvv">CVV</label>
+                <input type="number" class="form-control" id="cNumber" placeholder="123">
+                <label for="exDate">Expiration Date</label>
+                <input type="month" class="form-control" id="exDate" placeholder="12/22">
+            </div>
+            <button type="submit" class="btn btn-dark botonConfirmarReserva">Pagar</button>
         </div>
-      </div>
-        `;
-        let seccionFormaDePago = document.getElementById("seccionFormaPago");
-        seccionFormaDePago.appendChild(tarjeta);
+    </form>
+    </div>
+    `;
+    let seccionFormaDePago = document.getElementById("seccionFormaPago");
+    seccionFormaDePago.appendChild(tarjeta);
 
-        let botonPagar = document.getElementById("botonPagar");
-        botonPagar.onclick = () => {
+    let botonPagar = document.getElementById("botonPagar");
+    botonPagar.onsubmit = (e) => {
+
+        e.preventDefault();
+
+        let fname = document.getElementById("fname").value;
+        let card = document.getElementById("cardNumber").value;
+        let cvv = document.getElementById("cNumber").value;
+        let exDate = document.getElementById("exDate").value;
+    
+        if (!validar(fname) || fname == "")
+        {
+            console.log("Tarjeta Nombre incorrecto");
+            let alerta = document.createElement("div");
+            alerta.innerHTML = `
+                <p class="alerta">Por favor, ingrese un nombre</p>;
+            `;
+            seccionFormaDePago.appendChild(alerta);
+        }
+        else if (card == "" || card.length < 14 || card.length > 16)
+        {
+            console.log("Numero tarjeta incorrecto");
+            let alerta = document.createElement("div");
+            alerta.innerHTML = `
+                <p class="alerta">El número de tarjeta tiene entre 14 y 16 cifras</p>;
+            `;
+            seccionFormaDePago.appendChild(alerta);
+        }
+        else if (cvv == "" || cvv.length < 3 || cvv.length > 4)
+        {
+            console.log("CVV incorrecto");
+            let alerta = document.createElement("div");
+            alerta.innerHTML = `
+                <p class="alerta">Ingrese CVV de entre 3 y 4 cifras</p>;
+            `;
+            seccionFormaDePago.appendChild(alerta);
+        }
+
+        else
+        {
             Swal.fire(
                 'Has finalizado tu reserva',
                 'Te esperamos pronto',
                 'success'
-              );
+                );
             finalizar();
             };
-    }
+        }
+}
 
-    // Transferencia bancaria
-    function mostrarTransferencia()
-    {
-        let tran = document.createElement("div");
-        tran.innerHTML = `
-        <div class="articulos">
-        <h2 class="titulo">Datos para la transferencia bancaria</h2>
-        <p>Razón Social: Nuestro Hotel SA</p>
-        <p>CUIT: 1-123456789-10</p>
-        <p>CBU: 1234567890123456789012</p>
-        <p>Banco: Mi banco</p>
-        <p>Tipo de cuenta: CC en $</p>
-        <button type="button" class="btn btn-dark botonConfirmarReserva" id="botonContinuar2">Continuar</button>
-        </div>
-        `;
-        let seccionFormaDePago = document.getElementById("seccionFormaPago");
-        seccionFormaDePago.appendChild(tran);
+// Transferencia bancaria
+function mostrarTransferencia()
+{
+    let tran = document.createElement("div");
+    tran.innerHTML = `
+    <div class="articulos">
+    <h2 class="titulo">Datos para la transferencia bancaria</h2>
+    <p>Razón Social: Nuestro Hotel SA</p>
+    <p>CUIT: 1-123456789-10</p>
+    <p>CBU: 1234567890123456789012</p>
+    <p>Banco: Mi banco</p>
+    <p>Tipo de cuenta: CC en $</p>
+    <button type="button" class="btn btn-dark botonConfirmarReserva" id="botonContinuar2">Continuar</button>
+    </div>
+    `;
+    let seccionFormaDePago = document.getElementById("seccionFormaPago");
+    seccionFormaDePago.appendChild(tran);
 
-        let botonContinuar2 = document.getElementById("botonContinuar2");
-        botonContinuar2.onclick = () => {
-            Swal.fire(
-                'Has finalizado tu reserva',
-                'Te esperamos pronto',
-                'success'
-              );
-            finalizar();
-            };
-    }
+    let botonContinuar2 = document.getElementById("botonContinuar2");
+    botonContinuar2.onclick = () => {
+        Swal.fire(
+            'Has finalizado tu reserva',
+            'Te esperamos pronto',
+            'success'
+            );
+        finalizar();
+        };
+}
 
 // Finalizar
 function finalizar()
@@ -470,6 +587,11 @@ botonConsultas.onclick = () => consultaReservas();
 
 function consultaReservas()
 {
+    let ocultaCancelar = document.getElementById("cancelarReservas");
+    ocultaCancelar.className += " ocultar";
+    let ocultarIngresoFechas = document.getElementById("inputFechas");
+    ocultarIngresoFechas.className += " ocultar";
+
     let tituloConsultas = document.createElement("h3");
     tituloConsultas.innerHTML = `
         <h3 class="titleDemo">Reservas en Libros</h3>
@@ -520,6 +642,12 @@ botonCancelar.onclick = () => ingresarReservaACancelar();
 
 function ingresarReservaACancelar()
 {
+    let ocultaConsultar = document.getElementById("consultarReservas");
+    ocultaConsultar.className += " ocultar";
+    let ocultarIngresoFechas = document.getElementById("inputFechas");
+    ocultarIngresoFechas.className += " ocultar";
+
+
     let tituloCancelar = document.createElement("h3");
     tituloCancelar.innerHTML = `
         <h3 class="titleDemo">Ingrese el apellido de la reserva a cancelar</h3>
@@ -596,12 +724,6 @@ function mostrarReservasACancelar(nombreACancelar)
             `;
             contenidoTablaCancelar.appendChild(row);
             console.log(rese.idC);
-
-            // document.getElementById("1").onclick = () => {
-            //     alert("funciona");
-            //     cancelarReserva(rese.idC);
-            // };
-
         }
         tablaCancelar.appendChild(contenidoTablaCancelar);
     
@@ -612,9 +734,33 @@ function mostrarReservasACancelar(nombreACancelar)
   // El dato que tiene que recibir cancelarReserva es el indexOf del array reservas
 function cancelarReserva(num)
 {
+    Swal.fire({
+        title: 'Confirmacion',
+        text: "¿Querés cancelar la reserva?",
+        icon: 'warning',
+        showDenyButton: true,
+        confirmButtonColor: '#0C120C',
+        cancelButtonColor: '#C20114',
+        confirmButtonText: 'Sí'
+      }).then((result) => {
+        if (result.isDenied) {
+          Swal.fire(
+            window.location = "index.html"
+          )
+        }
+        });
+
         console.log("Id de la rva: " + num);
         num = num - 1;
         reservas.splice(num,1);
         localStorage.setItem("reservas", JSON.stringify(reservas));
         console.table(reservas);
+
+        let reservaCancelada = document.createElement("h3");
+        reservaCancelada.innerHTML = `
+            <h3 class="titleDemo">La reserva ha sido cancelada</h3>
+        `;
+        let seccionListaCancelar = document.getElementById("seccionListaCancelar");
+        seccionListaCancelar.className += " ocultar";
+        seccionCancelar.appendChild(reservaCancelada);
 }

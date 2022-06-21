@@ -411,6 +411,7 @@ html {
   align-content: stretch;
   font-size: 1.5rem;
   padding: 1rem;
+  text-transform: uppercase;
 }
 
 .dia{
@@ -518,4 +519,18 @@ html {
   font-size: 0.4rem;
   padding: 0.3rem;
   background-color: black;
+}
+
+.alerta{
+  font-size: 1.5rem;
+  margin-left: 5rem;
+  color: red;
+}
+
+.rojo{
+  color: red;
+}
+
+.negro{
+  color: black;
 }
